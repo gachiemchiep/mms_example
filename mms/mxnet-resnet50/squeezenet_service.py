@@ -12,6 +12,7 @@ import numpy as np
 from PIL import Image
 import cv2 as cv
 
+
 class SqueezeNetClassifier():
     def __init__(self):
         self.net = None
