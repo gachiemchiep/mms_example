@@ -4,23 +4,20 @@
 
 ```bash
 .
-├── config.properties       : setting file of mms
-├── environment.yml         : python environment
-├── imgs                    : images
-├── logs                    : log files of mms
-│   ├── access_log.log
-│   ├── mms_log.log
-│   ├── mms_metrics.log
-│   ├── model_log.log
-│   └── model_metrics.log
-├── mms                     : source code for each model
-│   ├── densenet-pytorch    : densenet, pytorch
-│   └── squeezenet-mxnet    : squeenet, mxnet
-├── model-archives          : model archieve file for mms
-│   ├── densenet121-pytorch.mar
-│   └── squeezenet_v1.1.mar
-└── README.md               : this file
-```
+mms_example/
+├── environment.yml                     : python anaconda environment
+├── LICENSE
+├── mms_example                         : this project
+│   ├── common  
+│   ├── config.properties               : setting file of mms
+│   ├── __init__.py
+│   ├── resources
+│   ├── services                        : example programs
+│   │   ├── __init__.py
+│   │   └── mxnet_resnet50              : 1. example classification using mxnet's resnet50
+│   │   ├── densenet-pytorch
+│   └── tests                           : tests
+└── README.md                           : README
 
-## How to use
+```
 
