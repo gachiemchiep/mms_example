@@ -13,7 +13,7 @@ from PIL import Image
 import cv2 as cv
 
 
-class SqueezeNetClassifier():
+class ResNet50Classifier():
     def __init__(self):
         self.net = None
         self.initialized = False
@@ -37,31 +37,27 @@ class SqueezeNetClassifier():
         :return: ndarray
         """
 
-        img = data[0].get("data")
-        if img is None:
-            img = data[0].get("body")
+        img_arrs = []
+        for idx in range(len(data)):
+            img = data[idx].get("data")
+            if img is None:
+                img = data[idx].get("body")
 
-        if img is None:
-            img = data[0].get("data")
+            if img is None:
+                img = data[idx].get("data")
 
-        if img is None or len(img) == 0:
-            self.error = "Empty image input"
-            return None
+            if img is None or len(img) == 0:
+                self.error = "Empty image input"
+                return None
 
-        img_arr = mx.image.imdecode(img)
+            img_arr = mx.image.imdecode(img)
+            img_arrs.append(img_arr)
 
-        # img_arr = mx.image.imresize(img_arr, 224, 224, interp=2)
-        # mx.nd.transpose(img_arr, (2, 0, 1))
-        # mx.image.imread
-        img_arr = gluoncv.data.transforms.presets.imagenet.transform_eval(img_arr)
-
-        # img_arr = mx.nd.expand_dims(img_arr, axis=0)
-        print("AAAA: {}".format(img_arr.shape))
-        return img_arr
+        img_arrs = gluoncv.data.transforms.presets.imagenet.transform_eval(img_arrs)
+        return img_arrs
 
     def inference(self, img, topk=5):
         """
-
 
         :param img:
         :param topk:
@@ -76,8 +72,6 @@ class SqueezeNetClassifier():
         rets = []
         for i in range(topk):
             ret = dict()
-            print(self.net.classes[inds[i]])
-            print(probs[inds[i]])
             ret[self.net.classes[inds[i]]] = str(probs[inds[i]])
             rets.append(ret)
 
@@ -88,7 +82,7 @@ class SqueezeNetClassifier():
 
 
 # Following code is not necessary if your service class contains `handle(self, data, context)` function
-_service = SqueezeNetClassifier()
+_service = ResNet50Classifier()
 
 
 def handle(data, context):
