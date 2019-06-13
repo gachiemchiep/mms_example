@@ -13,8 +13,11 @@ from PIL import Image
 import cv2 as cv
 
 
+from mms.context import Context
+
 class ResNet50Classifier():
     def __init__(self):
+        self.ctx = None
         self.net = None
         self.initialized = False
 
@@ -26,7 +29,10 @@ class ResNet50Classifier():
         :return:
         """
 
-        self.net = gluoncv.model_zoo.get_model("ResNet50_v1d", pretrained=True)
+        properties = context.system_properties
+        gpu_id = properties.get("gpu_id")
+        self.ctx = mx.cpu() if gpu_id is None else mx.gpu(gpu_id)
+        self.net = gluoncv.model_zoo.get_model("ResNet50_v1d", pretrained=True, ctx=self.ctx)
         self.initialized = True
 
     def preprocess(self, data):
@@ -63,7 +69,7 @@ class ResNet50Classifier():
         :param topk:
         :return:
         """
-        pred = self.net(img)
+        pred = self.net(img.as_in_context(self.ctx))
         # map predicted values to probability by softmax
         probs = mx.nd.softmax(pred)[0].asnumpy()
         # find the 5 class indices with the highest score
